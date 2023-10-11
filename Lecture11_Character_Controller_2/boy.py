@@ -32,6 +32,7 @@ class AutoRun:
     @staticmethod
     def enter(boy, e):
         print("무적 모드 on!")
+        boy.idle_start_time = get_time()
         pass
 
     @staticmethod
@@ -42,6 +43,8 @@ class AutoRun:
     @staticmethod
     def do(boy):
         print("무적임")
+        if get_time() - boy.idle_start_time > 4:
+            boy.state_machine.handle_event(('TIME_OUT', 0))
         # boy.frame = (boy.frame + 1) % 8
         # boy.x += boy.dir * 5
 
