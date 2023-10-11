@@ -47,7 +47,7 @@ class AutoRun:
         if get_time() - boy.idle_start_time > 4:
             boy.state_machine.handle_event(('TIME_OUT', 0))
         boy.frame = (boy.frame + 1) % 8
-        boy.x += boy.dir * 5
+        boy.x += boy.dir * 10
 
         if boy.x > 800:
             boy.dir *= -1
@@ -61,7 +61,7 @@ class AutoRun:
 
     @staticmethod
     def draw(boy):
-        boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y)
+        boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y + 35, 200, 200)
 
 
 class Idle:
