@@ -3,25 +3,32 @@
 from pico2d import load_image, SDL_KEYDOWN, SDLK_SPACE, SDL_KEYUP, SDLK_RIGHT, SDLK_LEFT, get_time, SDLK_a
 import math
 
-#define event check function
+
+# define event check function
 
 def space_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
 
+
 def time_out(e):
     return e[0] == 'TIME_OUT'
+
 
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
 
+
 def right_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_RIGHT
+
 
 def left_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_LEFT
 
+
 def left_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
+
 
 def auto_run(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_a
@@ -38,16 +45,13 @@ class AutoRun:
             boy.action = 1
             boy.dir = 1
         boy.idle_start_time = get_time()
-        pass
 
     @staticmethod
     def exit(boy, e):
-        print("무적 모드 off")
         pass
 
     @staticmethod
     def do(boy):
-        print("무적임")
         if get_time() - boy.idle_start_time > 4:
             boy.state_machine.handle_event(('TIME_OUT', 0))
         boy.frame = (boy.frame + 1) % 8
@@ -59,9 +63,6 @@ class AutoRun:
         elif boy.x < 0:
             boy.dir *= -1
             boy.action = 1
-
-
-
 
     @staticmethod
     def draw(boy):
@@ -93,6 +94,7 @@ class Idle:
         boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y)
         pass
 
+
 class Sleep:
 
     @staticmethod
@@ -122,9 +124,9 @@ class Run:
 
     @staticmethod
     def enter(boy, e):
-        if right_down(e) or left_up(e):     # 오른쪽으로
+        if right_down(e) or left_up(e):  # 오른쪽으로
             boy.dir, boy.action = 1, 1
-        elif left_down(e) or right_up(e):   # 왼쪽으로
+        elif left_down(e) or right_up(e):  # 왼쪽으로
             boy.dir, boy.action = -1, 0
         pass
 
@@ -150,10 +152,10 @@ class StateMachine:
             Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, time_out: Sleep, auto_run: AutoRun},
             Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},
             Sleep: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, space_down: Idle},
-            AutoRun: {time_out: Idle}
+            AutoRun: {time_out: Idle, right_down: Run, left_down: Run, right_up: Run, left_up: Run}
         }
 
-    def handle_event(self, e):  
+    def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
             if check_event(e):
                 self.cur_state.exit(self.boy, e)
