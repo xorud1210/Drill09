@@ -31,8 +31,12 @@ class AutoRun:
 
     @staticmethod
     def enter(boy, e):
-        print("무적 모드 on!")
-        boy.dir, boy.action = 1, 1
+        if boy.action == 2:
+            boy.action = 0
+            boy.dir = -1
+        elif boy.action == 3:
+            boy.action = 1
+            boy.dir = 1
         boy.idle_start_time = get_time()
         pass
 
