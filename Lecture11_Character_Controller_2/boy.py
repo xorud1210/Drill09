@@ -1,6 +1,6 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
-from pico2d import load_image, SDL_KEYDOWN, SDLK_SPACE, SDL_KEYUP, SDLK_RIGHT, SDLK_LEFT, get_time
+from pico2d import load_image, SDL_KEYDOWN, SDLK_SPACE, SDL_KEYUP, SDLK_RIGHT, SDLK_LEFT, get_time, SDLK_a
 import math
 
 #define event check function
@@ -23,7 +23,31 @@ def left_down(e):
 def left_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
 
+def auto_run(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_a
 
+
+class AutoRun:
+
+    @staticmethod
+    def enter(boy, e):
+        print("무적 모드 on!")
+        pass
+
+    @staticmethod
+    def exit(boy, e):
+        print("무적 모드 off")
+        pass
+
+    @staticmethod
+    def do(boy):
+        print("무적임")
+        # boy.frame = (boy.frame + 1) % 8
+        # boy.x += boy.dir * 5
+
+    @staticmethod
+    def draw(boy):
+        boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y)
 
 
 class Idle:
@@ -105,9 +129,10 @@ class StateMachine:
         self.boy = boy
         self.cur_state = Idle
         self.transitions = {
-            Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, time_out: Sleep},
-            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, },
-            Sleep: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, space_down: Idle}
+            Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, time_out: Sleep, auto_run: AutoRun},
+            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},
+            Sleep: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, space_down: Idle},
+            AutoRun: {time_out: Idle}
         }
 
     def handle_event(self, e):  
